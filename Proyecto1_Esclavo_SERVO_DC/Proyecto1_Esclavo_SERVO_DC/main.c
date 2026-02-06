@@ -20,16 +20,28 @@
 #define CMD_SERVO_OPEN       0x11
 #define CMD_SERVO_CLOSE      0x12
 
-// Servo
-#define SERVO_MIN_ANGLE      0
-#define SERVO_MAX_ANGLE      180
-#define SERVO_OPEN_ANGLE     120
-#define SERVO_CLOSE_ANGLE    20
 
 
 uint8_t command;
 uint8_t angle;
 
+// COMPROBAR FUNCIONAMIENTO
+/*
+int main(void)
+{
+	Servo_Init();
+
+	while (1)
+	{
+		Servo_SetAngle(0);
+		_delay_ms(2000);
+		Servo_SetAngle(180);
+		_delay_ms(2000);
+	}
+}
+*/
+
+/*
 int main(void)
 {
 	// Inicializaciones
@@ -67,3 +79,4 @@ int main(void)
 		}
 	}
 }
+*/
