@@ -120,7 +120,19 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="DC.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="DC.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="main.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="servo_timer1.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="servo_timer1.h">
       <SubType>compile</SubType>
     </Compile>
   </ItemGroup>

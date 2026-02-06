@@ -12,6 +12,11 @@
 
 #define SERVO_MIN_PULSE 2000   // 1 ms
 #define SERVO_MAX_PULSE 4000   // 2 ms
+// Servo
+#define SERVO_MIN_ANGLE      0
+#define SERVO_MAX_ANGLE      180
+#define SERVO_OPEN_ANGLE     120
+#define SERVO_CLOSE_ANGLE    20
 
 void Servo_Init(void) {
 	// PB1 = OC1A (D9)
@@ -28,7 +33,7 @@ void Servo_Init(void) {
 	OCR1A = SERVO_MIN_PULSE;
 }
 
-void Servo_SetAngle(uint8_t pulso) {
+void Servo_SetAngle(uint8_t angle) {
 	if (angle > SERVO_MAX_ANGLE)
 	angle = SERVO_MAX_ANGLE;
 

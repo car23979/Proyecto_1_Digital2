@@ -9,9 +9,7 @@
 
 #include <avr/io.h>
 #include <util/delay.h>
-#include "timer1_servo1.h"
-#include "PWM3.h"
-#include "timer1_config.h"
+#include "servo_timer1.h"
 #include "DC.h"
 
 // I2C
@@ -29,11 +27,43 @@
 #define SERVO_CLOSE_ANGLE    20
 
 
+uint8_t command;
+uint8_t angle;
+
 int main(void)
 {
-    /* Replace with your application code */
-    while (1) 
-    {
-    }
-}
+	// Inicializaciones
+	Servo_Init();
+	TWI_Slave_Init(SLAVE_SERVO_DC_ADDR);
 
+	while (1) {
+		// Esperar evento I2C
+		if ((TWSR & 0xF8) == 0x80) // Dato recibido
+		{
+			command = TWDR;
+
+			switch (command)
+			{
+				case CMD_SERVO_SET_ANGLE:
+				angle = TWI_Slave_Read();
+				Servo_SetAngle(angle);
+				break;
+
+				case CMD_SERVO_OPEN:
+				Servo_SetAngle(SERVO_OPEN_ANGLE);
+				break;
+
+				case CMD_SERVO_CLOSE:
+				Servo_SetAngle(SERVO_CLOSE_ANGLE);
+				break;
+
+				default:
+				// comando no válido
+				break;
+			}
+
+			// Preparar siguiente recepción
+			TWCR = (1 << TWINT) | (1 << TWEA) | (1 << TWEN);
+		}
+	}
+}
