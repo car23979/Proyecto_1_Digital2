@@ -1,5 +1,5 @@
 /*
- * pwm.c
+ * timer1_servo1.c
  *
  * Created: 11/04/2025 01:35:52 p. m.
  *  Author: Admin
