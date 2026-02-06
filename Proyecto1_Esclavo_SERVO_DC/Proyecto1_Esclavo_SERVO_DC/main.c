@@ -11,6 +11,25 @@
 #include <util/delay.h>
 #include "timer1_servo1.h"
 #include "PWM3.h"
+#include "timer1_config.h"
+#include "DC.h"
+
+// I2C
+#define SLAVE_SERVO_DC_ADDR  0x20
+
+// Comandos I2C
+#define CMD_SERVO_SET_ANGLE  0x10
+#define CMD_SERVO_OPEN       0x11
+#define CMD_SERVO_CLOSE      0x12
+
+// Servo
+#define SERVO_MIN_ANGLE      0
+#define SERVO_MAX_ANGLE      180
+#define SERVO_OPEN_ANGLE     120
+#define SERVO_CLOSE_ANGLE    20
+
+#endif
+
 
 
 int main(void)
