@@ -10,8 +10,8 @@
 #include <avr/io.h>
 #include "servo_timer1.h"
 
-#define SERVO_MIN_PULSE 2000   // 1 ms
-#define SERVO_MAX_PULSE 4000   // 2 ms
+#define SERVO_MIN_PULSE 1200   // 1 ms
+#define SERVO_MAX_PULSE 4800   // 2 ms
 // Servo
 #define SERVO_MIN_ANGLE      0
 #define SERVO_MAX_ANGLE      180

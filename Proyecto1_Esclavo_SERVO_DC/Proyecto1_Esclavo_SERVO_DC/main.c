@@ -26,7 +26,7 @@ uint8_t command;
 uint8_t angle;
 
 // COMPROBAR FUNCIONAMIENTO
-/*
+
 int main(void)
 {
 	Servo_Init();
@@ -39,7 +39,6 @@ int main(void)
 		_delay_ms(2000);
 	}
 }
-*/
 
 /*
 int main(void)
