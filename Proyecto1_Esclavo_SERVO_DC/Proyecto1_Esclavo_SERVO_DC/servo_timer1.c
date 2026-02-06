@@ -1,5 +1,6 @@
 /*
- * timer1_servo1.c
+ * servo_timer1.c
+ 
  *
  * Created: 11/04/2025 01:35:52 p. m.
  *  Author: Admin
@@ -7,7 +8,7 @@
 
 // pwm.c
 #include <avr/io.h>
-#include "timer1_servo1.h"
+#include "servo_timer1.h"
 
 void Timer1_Servo1_Init(void) {
 	DDRB |= (1 << PINB1); // PB1 como salida

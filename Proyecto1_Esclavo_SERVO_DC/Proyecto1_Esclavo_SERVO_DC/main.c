@@ -28,9 +28,6 @@
 #define SERVO_OPEN_ANGLE     120
 #define SERVO_CLOSE_ANGLE    20
 
-#endif
-
-
 
 int main(void)
 {
