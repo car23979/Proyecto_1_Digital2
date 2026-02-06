@@ -39,7 +39,8 @@ SUBDIRS :=
 C_SRCS +=  \
 ../DC.c \
 ../main.c \
-../servo_timer1.c
+../servo_timer1.c \
+../twi_slave.c
 
 
 PREPROCESSING_SRCS += 
@@ -51,22 +52,26 @@ ASM_SRCS +=
 OBJS +=  \
 DC.o \
 main.o \
-servo_timer1.o
+servo_timer1.o \
+twi_slave.o
 
 OBJS_AS_ARGS +=  \
 DC.o \
 main.o \
-servo_timer1.o
+servo_timer1.o \
+twi_slave.o
 
 C_DEPS +=  \
 DC.d \
 main.d \
-servo_timer1.d
+servo_timer1.d \
+twi_slave.d
 
 C_DEPS_AS_ARGS +=  \
 DC.d \
 main.d \
-servo_timer1.d
+servo_timer1.d \
+twi_slave.d
 
 OUTPUT_FILE_PATH +=Proyecto1_Esclavo_SERVO_DC.elf
 
@@ -97,6 +102,13 @@ LINKER_SCRIPT_DEP+=
 	
 
 ./servo_timer1.o: .././servo_timer1.c
+	@echo Building file: $<
+	@echo Invoking: AVR/GNU C Compiler : 5.4.0
+	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG  -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\include"  -Og -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega328p -B "C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\gcc\dev\atmega328p" -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	@echo Finished building: $<
+	
+
+./twi_slave.o: .././twi_slave.c
 	@echo Building file: $<
 	@echo Invoking: AVR/GNU C Compiler : 5.4.0
 	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG  -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\include"  -Og -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega328p -B "C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\gcc\dev\atmega328p" -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
