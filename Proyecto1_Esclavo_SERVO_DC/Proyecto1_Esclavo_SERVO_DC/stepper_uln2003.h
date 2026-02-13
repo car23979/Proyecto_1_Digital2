@@ -9,8 +9,11 @@
 #ifndef STEPPER_ULN2003_H_
 #define STEPPER_ULN2003_H_
 
+#include <stdint.h>
 
-
+void Stepper_Init(void);
+void Pump_Dose(uint16_t steps);
+void Stepper_Stop(void);
 
 
 #endif /* STEPPER_ULN2003_H_ */

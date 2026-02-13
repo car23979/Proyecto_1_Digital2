@@ -135,13 +135,16 @@
     <Compile Include="servo_timer1.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="stepper_uln2003.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="stepper_uln2003.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="twi_slave.c">
+    <Compile Include="I2C_Slave.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="twi_slave.h">
+    <Compile Include="I2C_Slave.h">
       <SubType>compile</SubType>
     </Compile>
   </ItemGroup>

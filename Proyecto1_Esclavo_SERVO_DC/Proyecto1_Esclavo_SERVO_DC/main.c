@@ -6,25 +6,64 @@
  */ 
 
 #define F_CPU 16000000UL
-
 #include <avr/io.h>
-#include <util/delay.h>
+#include "I2C_Slave.h"
 #include "servo_timer1.h"
-#include "DC.h"
+#include "stepper_uln2003.h"
 
-// I2C
-#define SLAVE_SERVO_DC_ADDR  0x20
+/************************************************************************/
+/* DIRECCIÓN I2C                                                        */
+/************************************************************************/
+#define SLAVE_ADDR 0x30
 
-// Comandos I2C
-#define CMD_SERVO_SET_ANGLE  0x10
-#define CMD_SERVO_OPEN       0x11
-#define CMD_SERVO_CLOSE      0x12
+/************************************************************************/
+/* COMANDOS                                                             */
+/************************************************************************/
+#define CMD_PUMP_DOSE   0x20
+#define CMD_SERVO_OPEN  0x10
+#define CMD_SERVO_CLOSE 0x11
 
+/************************************************************************/
+/* MAIN                                                                 */
+/************************************************************************/
 
+int main(void)
+{
+	uint8_t command;
+	uint8_t data;
 
-uint8_t command;
-uint8_t angle;
+	I2C_Slave_Init(SLAVE_ADDR);
+	Servo_Init();
+	Stepper_Init();
 
+	while (1)
+	{
+		command = I2C_Slave_WaitForCommand();
+
+		switch (command)
+		{
+			case CMD_SERVO_OPEN:
+			Servo_SetAngle(120);
+			break;
+
+			case CMD_SERVO_CLOSE:
+			Servo_SetAngle(20);
+			break;
+
+			case CMD_PUMP_DOSE:
+			data = I2C_Slave_ReadData();
+			Pump_Dose(data * 50);
+			break;
+
+			default:
+			break;
+		}
+
+		TWCR = (1 << TWEN) | (1 << TWEA) | (1 << TWINT);
+	}
+}
+
+/*
 // COMPROBAR FUNCIONAMIENTO
 
 int main(void)
@@ -39,6 +78,7 @@ int main(void)
 		_delay_ms(2000);
 	}
 }
+*/
 
 /*
 int main(void)
