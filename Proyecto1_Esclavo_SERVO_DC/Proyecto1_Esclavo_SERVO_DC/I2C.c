@@ -1,11 +1,11 @@
 /*
- * twi_slave.c
+ * I2C.c
  *
  * Created: 05/02/2026 08:12:55 p. m.
  *  Author: Admin
  */ 
 
-#include "twi_slave.h"
+#include "I2C.h"
 
 void TWI_Slave_Init(uint8_t address)
 {

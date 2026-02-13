@@ -1,5 +1,5 @@
 /*
- * twi_slave.h
+ * I2C.h
  *
  * Created: 05/02/2026 08:13:09 p. m.
  *  Author: Admin
