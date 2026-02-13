@@ -19,7 +19,8 @@
 /************************************************************************/
 /* COMANDOS                                                             */
 /************************************************************************/
-#define CMD_PUMP_DOSE   0x20
+#define CMD_PUMP_START   0x20
+#define CMD_PUMP_STOP    0x21
 #define CMD_SERVO_OPEN  0x10
 #define CMD_SERVO_CLOSE 0x11
 
@@ -29,19 +30,26 @@
 
 int main(void)
 {
-	uint8_t command;
-	uint8_t data;
-
 	I2C_Slave_Init(SLAVE_ADDR);
 	Servo_Init();
 	Stepper_Init();
 
-	while (1)
-	{
-		command = I2C_Slave_WaitForCommand();
+	uint8_t cmd;
 
-		switch (command)
+	while(1)
+	{
+		cmd = I2C_Slave_WaitForCommand();
+
+		switch(cmd)
 		{
+			case CMD_PUMP_START:
+			Pump_Start();
+			break;
+
+			case CMD_PUMP_STOP:
+			Pump_Stop();
+			break;
+
 			case CMD_SERVO_OPEN:
 			Servo_SetAngle(120);
 			break;
@@ -49,20 +57,15 @@ int main(void)
 			case CMD_SERVO_CLOSE:
 			Servo_SetAngle(20);
 			break;
-
-			case CMD_PUMP_DOSE:
-			data = I2C_Slave_ReadData();
-			Pump_Dose(data * 50);
-			break;
-
-			default:
-			break;
 		}
 
-		TWCR = (1 << TWEN) | (1 << TWEA) | (1 << TWINT);
+		TWCR = (1<<TWEN)|(1<<TWEA)|(1<<TWINT);
+
+		// IMPORTANTE
+		Stepper_Task();
 	}
 }
-
+	
 /*
 // COMPROBAR FUNCIONAMIENTO
 

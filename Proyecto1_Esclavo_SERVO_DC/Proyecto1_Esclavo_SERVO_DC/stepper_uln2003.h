@@ -12,8 +12,9 @@
 #include <stdint.h>
 
 void Stepper_Init(void);
-void Pump_Dose(uint16_t steps);
-void Stepper_Stop(void);
+void Pump_Start(void);
+void Pump_Stop(void);
+void Stepper_Task(void);
 
 
 #endif /* STEPPER_ULN2003_H_ */

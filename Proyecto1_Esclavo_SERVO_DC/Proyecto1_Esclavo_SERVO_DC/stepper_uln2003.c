@@ -9,7 +9,6 @@
 #define F_CPU 16000000UL
 #endif
 #include <avr/io.h>
-#include <util/delay.h>
 #include "stepper_uln2003.h"
 
 #define IN1 PD4
@@ -29,26 +28,38 @@ static const uint8_t sequence[8] =
 	0b10010000
 };
 
+static uint8_t step_index = 0;
+static uint8_t pump_running = 0;
+static uint16_t step_delay_counter = 0;
+
 void Stepper_Init(void)
 {
-	DDRD |= (1 << IN1) | (1 << IN2) | (1 << IN3) | (1 << IN4);
+	DDRD |= (1<<IN1)|(1<<IN2)|(1<<IN3)|(1<<IN4);
 }
 
-void Pump_Dose(uint16_t steps)
+void Pump_Start(void)
 {
-	static uint8_t index = 0;
-
-	for (uint16_t i = 0; i < steps; i++)
-	{
-		index = (index + 1) % 8;
-		PORTD = (PORTD & 0x0F) | sequence[index];
-		_delay_ms(2);
-	}
-
-	Stepper_Stop();
+	pump_running = 1;
 }
 
-void Stepper_Stop(void)
+void Pump_Stop(void)
 {
+	pump_running = 0;
 	PORTD &= 0x0F;
+}
+
+void Stepper_Task(void)
+{
+	if(pump_running)
+	{
+		step_delay_counter++;
+
+		if(step_delay_counter >= 2000)   // Ajustar velocidad
+		{
+			step_delay_counter = 0;
+
+			step_index = (step_index + 1) % 8;
+			PORTD = (PORTD & 0x0F) | sequence[step_index];
+		}
+	}
 }

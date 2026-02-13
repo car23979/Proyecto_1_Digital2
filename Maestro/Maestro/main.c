@@ -15,7 +15,8 @@
 
 #define SLAVE_ACTUATORS_ADDR  0x30
 
-#define CMD_PUMP_DOSE  0x20
+#define CMD_PUMP_START  0x20
+#define CMD_PUMP_STOP   0x21
 #define CMD_SERVO_OPEN 0x10
 #define CMD_SERVO_CLOSE 0x11
 
@@ -29,12 +30,19 @@ volatile uint8_t command_ready = 0;
 /* FUNCIONES I2C                                                        */
 /************************************************************************/
 
-void Activate_Pump(uint8_t dose)
+void Pump_Start_Command(void)
 {
 	I2C_MasterStart();
 	I2C_Master_Write((SLAVE_ACTUATORS_ADDR<<1)|I2C_WRITE);
-	I2C_Master_Write(CMD_PUMP_DOSE);
-	I2C_Master_Write(dose);
+	I2C_Master_Write(CMD_PUMP_START);
+	I2C_MasterStop();
+}
+
+void Pump_Stop_Command(void)
+{
+	I2C_MasterStart();
+	I2C_Master_Write((SLAVE_ACTUATORS_ADDR<<1)|I2C_WRITE);
+	I2C_Master_Write(CMD_PUMP_STOP);
 	I2C_MasterStop();
 }
 
@@ -60,26 +68,40 @@ void Servo_Close(void)
 
 void Process_Command(void)
 {
+	// Ejemplos:
+	// P1 -> Start bomba
+	// P0 -> Stop bomba
+	// S1 -> Servo abrir
+	// S0 -> Servo cerrar
+
 	if(rx_buffer[0] == 'P')
 	{
-		uint8_t dose = atoi((char*)&rx_buffer[1]);
-		Activate_Pump(dose);
-		UART_SendString("Pump OK\r\n");
+		if(rx_buffer[1] == '1')
+		{
+			Pump_Start_Command();
+			UART_SendString("Pump START\r\n");
+		}
+		else if(rx_buffer[1] == '0')
+		{
+			Pump_Stop_Command();
+			UART_SendString("Pump STOP\r\n");
+		}
 	}
 	else if(rx_buffer[0] == 'S')
 	{
 		if(rx_buffer[1] == '1')
 		{
 			Servo_Open();
-			UART_SendString("Servo Open\r\n");
+			UART_SendString("Servo OPEN\r\n");
 		}
-		else
+		else if(rx_buffer[1] == '0')
 		{
 			Servo_Close();
-			UART_SendString("Servo Close\r\n");
+			UART_SendString("Servo CLOSE\r\n");
 		}
 	}
 }
+
 
 /************************************************************************/
 /* ISR                                                                  */
