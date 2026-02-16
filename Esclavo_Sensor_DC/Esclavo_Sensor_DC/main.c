@@ -19,6 +19,10 @@
 
 #define SLAVE_ADDR		0x31
 #define CMD_READ_SOIL	0x40
+#define CMD_FAN_ON		0x41
+#define CMD_FAN_OFF		0x42
+#define CMD_FAN_PWM		0x43
+
 
 #define SOIL_POWER_PIN	PB0	 // D8
 
