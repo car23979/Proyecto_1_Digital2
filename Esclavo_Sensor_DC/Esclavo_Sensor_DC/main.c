@@ -46,7 +46,7 @@ int	main(void)
 		 if (command == CMD_READ_SOIL)
 		 {
 			 // Encender sensor
-			 PORTB |= (1 << SOIL_POWER_PIN)
+			 PORTB |= (1 << SOIL_POWER_PIN);
 			 _delay_ms(50);		// Estabilizar lectura
 			 
 			 soil_value = ADC_Read(0);	// A0
@@ -55,7 +55,7 @@ int	main(void)
 			 PORTB &= ~(1 << SOIL_POWER_PIN);
 			 
 			 // Convertir a 8 bits para I2C
-			 uint8_t soil_value = soil_value >> 2;
+			 uint8_t soil_8bit = soil_value >> 2;
 			 
 			 // Preparar respuesta
 			 TWDR = soil_8bit;
