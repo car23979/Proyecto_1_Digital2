@@ -8,6 +8,7 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <avr/interrupt.h>
 #include "I2C.h"
 #include "UART.h"
@@ -32,7 +33,18 @@
 /* Comandos Nano 2                                                      */
 /************************************************************************/
 
-#define RX_BUFFER_SIZE 32
+#define CMD_READ_SOIL    0x40
+
+/************************************************************************/
+/* parametros                                                           */
+/************************************************************************/
+
+#define SOIL_THRESHOLD   80
+#define RX_BUFFER_SIZE   32
+
+/************************************************************************/
+/* Variables UART                                                       */
+/************************************************************************/
 
 volatile char rx_buffer[RX_BUFFER_SIZE];
 volatile uint8_t rx_index = 0;
@@ -74,6 +86,26 @@ void Servo_Close(void)
 	I2C_MasterStop();
 }
 
+uint8_t Read_Soil(void)
+{
+	uint8_t soil_value = 0;
+
+	if(I2C_MasterStart())
+	{
+		I2C_Master_Write((SLAVE_ENV_ADDR<<1)|I2C_WRITE);
+		I2C_Master_Write(CMD_READ_SOIL);
+
+		I2C_MasterRepeatedStart();
+		I2C_Master_Write((SLAVE_ENV_ADDR<<1)|I2C_READ);
+		I2C_MasterRead(&soil_value, I2C_NACK);
+
+		I2C_MasterStop();
+	}
+
+	return soil_value;
+}
+
+
 /************************************************************************/
 /* PROCESAMIENTO UART                                                   */
 /************************************************************************/
@@ -86,8 +118,22 @@ void Process_Command(void)
 	// S1 -> Servo abrir
 	// S0 -> Servo cerrar
 	// Q  -> Sensor humedad suelo
+	
+	if(rx_buffer[0] == 'Q')   // Consulta humedad
+	{
+		uint8_t soil = Read_Soil();
 
-	if(rx_buffer[0] == 'P')
+		char buffer[40];
+		sprintf(buffer, "Soil: %d\r\n", soil);
+		UART_SendString(buffer);
+
+		if(soil < SOIL_THRESHOLD)
+		UART_SendString("Necesita agua\r\n");
+		else
+		UART_SendString("No necesita agua\r\n");
+	}
+	
+	else if(rx_buffer[0] == 'P')
 	{
 		if(rx_buffer[1] == '1')
 		{
@@ -100,6 +146,7 @@ void Process_Command(void)
 			UART_SendString("Pump STOP\r\n");
 		}
 	}
+	
 	else if(rx_buffer[0] == 'S')
 	{
 		if(rx_buffer[1] == '1')

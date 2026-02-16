@@ -30,7 +30,7 @@ static const uint8_t sequence[8] =
 
 static uint8_t step_index = 0;
 static uint8_t pump_running = 0;
-static uint16_t step_delay_counter = 0;
+static uint16_t step_counter = 0;
 
 void Stepper_Init(void)
 {
@@ -52,11 +52,11 @@ void Stepper_Task(void)
 {
 	if(pump_running)
 	{
-		step_delay_counter++;
+		step_counter++;
 
-		if(step_delay_counter >= 2000)   // Ajustar velocidad
+		if(step_counter >= 2000)   // Ajustar velocidad
 		{
-			step_delay_counter = 0;
+			step_counter = 0;
 
 			step_index = (step_index + 1) % 8;
 			PORTD = (PORTD & 0x0F) | sequence[step_index];
