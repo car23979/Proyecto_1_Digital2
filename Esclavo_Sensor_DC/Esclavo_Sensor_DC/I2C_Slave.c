@@ -2,7 +2,7 @@
  * I2C.c
  *
  * Created: 05/02/2026 08:12:55 p. m.
- *  Author: Admin
+ *  Author: David Carranza
  */ 
 
 #include "I2C_Slave.h"
