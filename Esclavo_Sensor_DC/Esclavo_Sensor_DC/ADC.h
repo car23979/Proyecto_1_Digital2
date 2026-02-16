@@ -2,7 +2,7 @@
  * ADC.h
  *
  * Created: 15/02/2026 09:57:24 p. m.
- *  Author: Admin
+ *  Author: David Carranza
  */ 
 
 
