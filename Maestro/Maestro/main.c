@@ -12,13 +12,25 @@
 #include "I2C.h"
 #include "UART.h"
 
+/************************************************************************/
+/*                        Direcciones I2C                               */
+/************************************************************************/
 
-#define SLAVE_ACTUATORS_ADDR  0x30
+#define SLAVE_ACTUATORS_ADDR  0x30	// Nano 1
+#define SLAVE_ENV_ADDR		  0x31	// Nano 2
+
+/************************************************************************/
+/* Comandos Nano 1                                                      */
+/************************************************************************/
 
 #define CMD_PUMP_START  0x20
 #define CMD_PUMP_STOP   0x21
 #define CMD_SERVO_OPEN 0x10
 #define CMD_SERVO_CLOSE 0x11
+
+/************************************************************************/
+/* Comandos Nano 2                                                      */
+/************************************************************************/
 
 #define RX_BUFFER_SIZE 32
 
@@ -73,6 +85,7 @@ void Process_Command(void)
 	// P0 -> Stop bomba
 	// S1 -> Servo abrir
 	// S0 -> Servo cerrar
+	// Q  -> Sensor humedad suelo
 
 	if(rx_buffer[0] == 'P')
 	{
