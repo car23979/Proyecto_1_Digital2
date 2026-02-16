@@ -19,10 +19,10 @@
 /************************************************************************/
 /* COMANDOS                                                             */
 /************************************************************************/
-#define CMD_PUMP_START   0x20
-#define CMD_PUMP_STOP    0x21
-#define CMD_SERVO_OPEN  0x10
-#define CMD_SERVO_CLOSE 0x11
+#define CMD_PUMP_START	0x20
+#define CMD_PUMP_STOP	0x21
+#define CMD_SERVO_OPEN	0x10
+#define CMD_SERVO_CLOSE	0x11
 
 /************************************************************************/
 /* MAIN                                                                 */
@@ -38,29 +38,33 @@ int main(void)
 
 	while(1)
 	{
-		cmd = I2C_Slave_WaitForCommand();
-
-		switch(cmd)
+		cmd = I2C_Slave_CheckCommand();
+		
+		if(cmd != 0xFF)
 		{
-			case CMD_PUMP_START:
-			Pump_Start();
-			break;
 
-			case CMD_PUMP_STOP:
-			Pump_Stop();
-			break;
+			switch(cmd)
+			{
+				case CMD_PUMP_START:
+				Pump_Start();
+				break;
 
-			case CMD_SERVO_OPEN:
-			Servo_SetAngle(120);
-			break;
+				case CMD_PUMP_STOP:
+				Pump_Stop();
+				break;
 
-			case CMD_SERVO_CLOSE:
-			Servo_SetAngle(20);
-			break;
+				case CMD_SERVO_OPEN:
+				Servo_SetAngle(120);
+				break;
+
+				case CMD_SERVO_CLOSE:
+				Servo_SetAngle(20);
+				break;
+			}
+
+			TWCR = (1<<TWEN)|(1<<TWEA)|(1<<TWINT);
 		}
-
-		TWCR = (1<<TWEN)|(1<<TWEA)|(1<<TWINT);
-
+		
 		// IMPORTANTE
 		Stepper_Task();
 	}
