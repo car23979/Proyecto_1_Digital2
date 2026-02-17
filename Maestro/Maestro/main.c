@@ -14,14 +14,14 @@
 #include "UART.h"
 
 /************************************************************************/
-/*                        Direcciones I2C                               */
+/*                        DIRECCIONES I2C                               */
 /************************************************************************/
 
 #define SLAVE_ACTUATORS_ADDR  0x30	// Nano 1
 #define SLAVE_ENV_ADDR		  0x31	// Nano 2
 
 /************************************************************************/
-/* Comandos Nano 1                                                      */
+/* COMANDOS NANO 1                                                      */
 /************************************************************************/
 
 #define CMD_PUMP_START	0x20
@@ -30,20 +30,23 @@
 #define CMD_SERVO_CLOSE	0x11
 
 /************************************************************************/
-/* Comandos Nano 2                                                      */
+/* COMANDOS NANO 2                                                      */
 /************************************************************************/
 
-#define CMD_READ_SOIL    0x40
+#define CMD_READ_SOIL	0x40
+#define CMD_FAN_ON		0x41
+#define CMF_FAN_OFF		0X42
+#define CMD_FAN_PWM		0x43
 
 /************************************************************************/
-/* parametros                                                           */
+/* PARAMETROS                                                           */
 /************************************************************************/
 
 #define SOIL_THRESHOLD   150
 #define RX_BUFFER_SIZE   32
 
 /************************************************************************/
-/* Variables UART                                                       */
+/* VARIABLES UART                                                       */
 /************************************************************************/
 
 volatile char rx_buffer[RX_BUFFER_SIZE];
@@ -85,6 +88,16 @@ void Servo_Close(void)
 	I2C_Master_Write(CMD_SERVO_CLOSE);
 	I2C_MasterStop();
 }
+
+void Fan_On(void)
+{
+	I2C_MasterStart();
+	I2C_Master_Write((SLAVE_ENV_ADDR<<1)|I2C_WRITE);
+	I2C_Master_Write(CMD_FAN_ON);
+	I2C_MasterStop();
+}
+
+
 
 uint8_t Read_Soil(void)
 {
