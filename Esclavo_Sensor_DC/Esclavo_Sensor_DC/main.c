@@ -98,8 +98,15 @@ int	main(void)
 				case CMD_FAN_PWM:
 				// El esclavo debe esperar el siguiente byte que contiene la velocidad
 				// Función para leer el dato que viene después del comando
-				uint8_t speed_val = I2C_Slave_CheckCommand();
-				DC_SetSpeed(speed_val);
+				{
+					// Esperar siguiente dato
+					while((TWSR & 0xF8) != 0x80);
+					uint8_t speed = TWDR;
+
+					TWCR = (1<<TWEN)|(1<<TWEA)|(1<<TWINT);
+
+					DC_SetSpeed(speed);
+				}
 				break;
 					
 			}		 

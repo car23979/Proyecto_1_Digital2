@@ -2,7 +2,7 @@
  * Maestro.c
  *
  * Created: 12/02/2026 07:37:51 p. m.
- * Author : Admin
+ * Author : David Carranza
  */ 
 #define F_CPU 16000000UL
 #include <avr/io.h>
@@ -12,6 +12,7 @@
 #include <avr/interrupt.h>
 #include "I2C.h"
 #include "UART.h"
+#include "HD44780_4b.h"
 
 /************************************************************************/
 /*                        DIRECCIONES I2C                               */
@@ -52,6 +53,19 @@
 volatile char rx_buffer[RX_BUFFER_SIZE];
 volatile uint8_t rx_index = 0;
 volatile uint8_t command_ready = 0;
+
+/************************************************************************/
+/* LCD 4 BITS                                                                    */
+/************************************************************************/
+
+LCD_4b lcd = {
+	.rs = { &PORTD, &DDRD, PORTD2 },
+	.e  = { &PORTD, &DDRD, PORTD3 },
+	.d4 = { &PORTD, &DDRD, PORTD5 },
+	.d5 = { &PORTD, &DDRD, PORTD6 },
+	.d6 = { &PORTD, &DDRD, PORTD7 },
+	.d7 = { &PORTB, &DDRB, PORTB0 }
+};
 
 /************************************************************************/
 /* FUNCIONES I2C                                                        */
@@ -105,6 +119,14 @@ void Fan_Off(void)
 	I2C_MasterStop();
 }
 
+void Fan_SetSpeed(uint8_t speed)
+{
+	I2C_MasterStart();
+	I2C_Master_Write((SLAVE_ENV_ADDR<<1)|I2C_WRITE);
+	I2C_Master_Write(CMD_FAN_PWM);
+	I2C_Master_Write(speed);
+	I2C_MasterStop();
+}
 
 
 uint8_t Read_Soil(void)
@@ -198,7 +220,19 @@ void Process_Command(void)
 			UART_SendString("Fan OFF\r\n");
 		}
 	}
-}
+	
+	else if(rx_buffer[0] == 'V')
+	{
+		uint8_t speed = atoi((char*)&rx_buffer[1]);
+		if(speed > 255) speed = 255;
+
+		Fan_SetSpeed(speed);
+
+		char buffer[40];
+		sprintf(buffer, "Fan speed: %d\r\n", speed);
+		UART_SendString(buffer);
+	}
+
 }
 
 
@@ -231,17 +265,43 @@ int main(void)
 {
 	I2C_MasterInit(100000UL, 1);
 	UART_Init(UART_BAUD_9600_16MHZ, UART_INTERRUPTS_ENABLED);
+	LCD_Init_4b(&lcd);
 
 	sei();   // Habilitar interrupciones globales
 
+	LCD_Clear(&lcd);
+	LCD_SetCursor(&lcd, 0, 0);
+	LCD_WriteString(&lcd, "INVERNADERO OK");
+	
 	UART_SendString("Sistema listo\r\n");
+	
+	uint8_t current_hum = 0;
+	char lcd_buf[17];
 
 	while(1)
 	{
+		// Comandos UART
 		if(command_ready)
 		{
 			Process_Command();
 			command_ready = 0;
 		}
+		
+		// B. Actualizar datos de sensores cada cierto tiempo (sin usar delay largo)
+		static uint16_t refresh_timer = 0;
+		if(refresh_timer++ > 500) 
+		
+		{ // Aproximadamente cada 500ms
+			current_hum = uint8_t percentage();
+			
+			// Actualizar LCD Fila 2
+			LCD_SetCursor(&lcd, 0, 1);
+			sprintf(lcd_buf, "Humedad: %3d%%  ", current_hum);
+			LCD_WriteString(&lcd, lcd_buf);
+			
+			refresh_timer = 0;
+		}
+		
+		_delay_ms(1);
 	}
 }
