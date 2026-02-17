@@ -20,6 +20,7 @@
 
 #define SLAVE_ACTUATORS_ADDR  0x30	// Nano 1
 #define SLAVE_ENV_ADDR		  0x31	// Nano 2
+#define TSL2561_ADDR          0x39	// Sensor de Luz
 
 /************************************************************************/
 /* COMANDOS NANO 1                                                      */
@@ -40,11 +41,24 @@
 #define CMD_FAN_PWM		0x43
 
 /************************************************************************/
+/* COMANDOS SENSOR LUZ                                                                     */
+/************************************************************************/
+
+#define TSL2561_CMD_BIT       0x80
+#define TSL2561_WORD_BIT      0x20
+#define TSL2561_REG_CONTROL   0x00
+#define TSL2561_REG_DATA0LO   0x0C
+#define CMD_POWER_UP          (TSL2561_CMD_BIT | TSL2561_REG_CONTROL)
+#define CMD_READ_DATA         (TSL2561_CMD_BIT | TSL2561_WORD_BIT | TSL2561_REG_DATA0LO)
+
+/************************************************************************/
 /* PARAMETROS                                                           */
 /************************************************************************/
 
 #define SOIL_THRESHOLD   150
 #define RX_BUFFER_SIZE   32
+#define SOIL_RAW_DRY   255
+#define SOIL_RAW_WET   160
 
 /************************************************************************/
 /* VARIABLES UART                                                       */
@@ -70,6 +84,31 @@ LCD_4b lcd = {
 /************************************************************************/
 /* FUNCIONES I2C                                                        */
 /************************************************************************/
+
+void TSL2561_Init_Sensor(void) {
+	if (I2C_MasterStart()) {
+		if (I2C_Master_Write((TSL2561_ADDR << 1) | I2C_WRITE) == 0x18) {
+			I2C_Master_Write(CMD_POWER_UP);
+			I2C_Master_Write(0x03); // Encender
+		}
+		I2C_MasterStop();
+	}
+}
+
+uint16_t TSL2561_Read_Luminosity(void) {
+	uint8_t lo = 0, hi = 0;
+	if (I2C_MasterStart()) {
+		I2C_Master_Write((TSL2561_ADDR << 1) | I2C_WRITE);
+		I2C_Master_Write(CMD_READ_DATA);
+		I2C_MasterRepeatedStart();
+		I2C_Master_Write((TSL2561_ADDR << 1) | I2C_READ);
+		I2C_MasterRead(&lo, I2C_ACK);
+		I2C_MasterRead(&hi, I2C_NACK);
+		I2C_MasterStop();
+	}
+	return (uint16_t)((hi << 8) | lo);
+}
+
 
 void Pump_Start_Command(void)
 {
@@ -168,12 +207,23 @@ void Process_Command(void)
 		uint8_t soil = Read_Soil();
 
 		char buffer[40];
-		uint8_t percentage = 100 - ((soil * 100) / 255);
+		uint8_t percentage;
 
+		if(soil >= SOIL_RAW_DRY)
+		percentage = 0;
+		else if(soil <= SOIL_RAW_WET)
+		percentage = 100;
+		else
+		{
+			percentage = 100 -
+			((soil - SOIL_RAW_WET) * 100) /
+			(SOIL_RAW_DRY - SOIL_RAW_WET);
+		}
+		
 		sprintf(buffer, "Soil: %d (%d%%)\r\n", soil, percentage);
 		UART_SendString(buffer);
 
-		if(soil < SOIL_THRESHOLD)
+		if(percentage > 40)
 		UART_SendString("No necesita agua\r\n");
 		else
 		UART_SendString("Necesita agua\r\n");
@@ -275,7 +325,7 @@ int main(void)
 	
 	UART_SendString("Sistema listo\r\n");
 	
-	uint8_t current_hum = 0;
+	//uint8_t current_hum = 0;
 	char lcd_buf[17];
 
 	while(1)
@@ -292,11 +342,25 @@ int main(void)
 		if(refresh_timer++ > 500) 
 		
 		{ // Aproximadamente cada 500ms
-			current_hum = uint8_t percentage();
+			uint8_t soil = Read_Soil();
+
+			uint8_t percentage;
+
+			if(soil >= SOIL_RAW_DRY)
+			percentage = 0;
+			else if(soil <= SOIL_RAW_WET)
+			percentage = 100;
+			else
+			{
+				percentage = 100 -
+				((soil - SOIL_RAW_WET) * 100) /
+				(SOIL_RAW_DRY - SOIL_RAW_WET);
+			}
+
 			
 			// Actualizar LCD Fila 2
 			LCD_SetCursor(&lcd, 0, 1);
-			sprintf(lcd_buf, "Humedad: %3d%%  ", current_hum);
+			sprintf(lcd_buf, "Humedad: %3d%%  ", percentage);
 			LCD_WriteString(&lcd, lcd_buf);
 			
 			refresh_timer = 0;
