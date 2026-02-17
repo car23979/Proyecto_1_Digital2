@@ -13,6 +13,9 @@
 #define F_CPU 16000000UL
 #endif
 
+#define I2C_TIMEOUT_LIMIT  10000
+
+
 void I2C_MasterInit(unsigned long SCL_Clock, uint8_t Prescaler)
 {
 	DDRC &= ~((1 << DDC4) | (1 << DDC5));
@@ -32,8 +35,15 @@ void I2C_MasterInit(unsigned long SCL_Clock, uint8_t Prescaler)
 
 uint8_t I2C_MasterStart()
 {
+	uint16_t timeout = 0;
+	
 	TWCR = (1 << TWINT) | (1 << TWSTA) | (1 << TWEN);
-	while (!(TWCR & (1 << TWINT)));
+	
+	while (!(TWCR & (1 << TWINT)))
+	{
+		if (timeout++ > I2C_TIMEOUT_LIMIT)
+		return 0;  // timeout
+	}
 
 	uint8_t status = (TWSR & 0xF8);
 	return (status == 0x08);
@@ -55,21 +65,34 @@ void I2C_MasterStop(void)
 
 uint8_t I2C_Master_Write(uint8_t dato)
 {
+	uint16_t timeout = 0;
+	
 	TWDR = dato;
 	TWCR = (1 << TWEN) | (1 << TWINT);
+	
 	while(!(TWCR & (1 << TWINT)));
+	{
+		if (timeout++ > I2C_TIMEOUT_LIMIT)
+		return 0;  // timeout
+	}
 
 	return (TWSR & 0xF8);
 }
 
 uint8_t I2C_MasterRead(uint8_t *buffer, uint8_t ack)
 {
+	uint16_t timeout = 0;
+	
 	if(ack)
-	TWCR = (1 << TWEN) | (1 << TWINT) | (1 << TWEA);
+		TWCR = (1 << TWEN) | (1 << TWINT) | (1 << TWEA);
 	else
-	TWCR = (1 << TWEN) | (1 << TWINT);
+		TWCR = (1 << TWEN) | (1 << TWINT);
 
-	while(!(TWCR & (1 << TWINT)));
+	while(!(TWCR & (1 << TWINT)))
+	{
+		if (timeout++ > I2C_TIMEOUT_LIMIT)
+			return 0;
+	}
 
 	uint8_t status = TWSR & 0xF8;
 
