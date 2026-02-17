@@ -4,6 +4,8 @@
 
 ADC.c
 
+dc_motor.c
+
 I2C_Slave.c
 
 main.c

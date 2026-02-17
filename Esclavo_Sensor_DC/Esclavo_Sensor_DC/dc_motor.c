@@ -27,3 +27,19 @@ void DC_Init(void)
 	OCR2B = 0;	// Motor Apagado
 }
 
+void DC_On(void)
+{
+	PORTD |= (1 << IN1);
+	PORTD &= (1 << IN2);
+	OCR2B = 200;	// Velocidad fija
+}
+
+void DC_Off(void)
+{
+	OCR2B = 0;
+}
+
+void DC_SetSpeed(uint8_t speed)
+{
+	OCR2B = speed;
+}
