@@ -13,6 +13,8 @@
 #include "ADC.h"
 #include "I2C_Slave.h"
 #include "dc_motor.h"
+#include "UART.h"
+#include <stdio.h>
 
 /************************************************************************/
 /*                          CONFIGURACIÓN                               */
@@ -27,6 +29,8 @@
 
 #define SOIL_POWER_PIN	PB0	 // D8
 
+extern volatile uint8_t tx_data;
+
 
 /************************************************************************/
 /*                               MAIN                                    */
@@ -34,10 +38,13 @@
 
 int	main(void)
 {
-	uint8_t command;
-	uint16_t soil_value;
+	
+	//uint16_t soil_value;
+	uint8_t command; 
 	
 	// Inicializadores
+	UART_Init(UART_BAUD_9600_16MHZ, UART_INTERRUPTS_DISABLED);
+	UART_SendString("Sensor listo\r\n");
 	I2C_Slave_Init(SLAVE_ADDR);
 	ADC_Init();
 	DC_Init();
@@ -46,9 +53,12 @@ int	main(void)
 	DDRB |= (1 << SOIL_POWER_PIN);
 	PORTB &= ~(1 << SOIL_POWER_PIN);	// Apagado inicialmente
 	
+	
+
+	
 	while(1)
 	{
-		command = I2C_Slave_WaitForCommand();
+		command = I2C_Slave_CheckCommand();
 		
 		if (command != 0xFF)
 		
@@ -56,12 +66,15 @@ int	main(void)
 			switch(command)
 			{
 				case CMD_READ_SOIL:
+				{
+					uint16_t soil_value;
+					
 					 // Encender sensor
 					 PORTB |= (1 << SOIL_POWER_PIN);
-					 _delay_ms(50);		// Estabilizar lectura
+					 //_delay_ms(50);		// Estabilizar lectura
 			 
 					 soil_value = ADC_Read(0);	// A0
-			 
+					 
 					 // Apagar sensor
 					 PORTB &= ~(1 << SOIL_POWER_PIN);
 			 
@@ -69,9 +82,11 @@ int	main(void)
 					 uint8_t soil_8bit = soil_value >> 2;
 			 
 					 // Preparar respuesta
-					 TWDR = soil_8bit;
-					 break;
+					 tx_data = soil_8bit;
 					 
+				}
+				break;
+				
 				case CMD_FAN_ON:
 					DC_On();
 					break;
@@ -79,13 +94,15 @@ int	main(void)
 				case CMD_FAN_OFF:
 					DC_Off();
 					break;
+				
+				case CMD_FAN_PWM:
+				// El esclavo debe esperar el siguiente byte que contiene la velocidad
+				// Función para leer el dato que viene después del comando
+				uint8_t speed_val = I2C_Slave_CheckCommand();
+				DC_SetSpeed(speed_val);
+				break;
 					
-			}
-		
-		// Re-armar TWI
-		TWCR = (1 << TWEN) | (1 << TWEA) | (1 << TWINT); 
-		 
-		 
+			}		 
 		}
 	}
 }

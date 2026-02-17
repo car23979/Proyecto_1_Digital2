@@ -7,6 +7,7 @@
 
 #define F_CPU 16000000UL
 #include <avr/io.h>
+#include <util/delay.h>
 #include "I2C_Slave.h"
 #include "servo_timer1.h"
 #include "stepper_uln2003.h"
@@ -46,29 +47,30 @@ int main(void)
 			switch(cmd)
 			{
 				case CMD_PUMP_START:
-				Pump_Start();
-				break;
+					Pump_Start();
+					break;
 
 				case CMD_PUMP_STOP:
-				Pump_Stop();
-				break;
+					Pump_Stop();
+					break;
 
 				case CMD_SERVO_OPEN:
-				Servo_SetAngle(120);
-				break;
+					Servo_SetAngle(120);
+					break;
 
 				case CMD_SERVO_CLOSE:
-				Servo_SetAngle(20);
-				break;
+					Servo_SetAngle(20);
+					break;
 			}
 
-			TWCR = (1<<TWEN)|(1<<TWEA)|(1<<TWINT);
+			
 		}
 		
 		// IMPORTANTE
 		Stepper_Task();
 	}
 }
+
 	
 /*
 // COMPROBAR FUNCIONAMIENTO

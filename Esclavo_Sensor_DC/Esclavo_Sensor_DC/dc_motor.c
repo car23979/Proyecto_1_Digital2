@@ -30,7 +30,7 @@ void DC_Init(void)
 void DC_On(void)
 {
 	PORTD |= (1 << IN1);
-	PORTD &= (1 << IN2);
+	PORTD &= ~(1 << IN2);
 	OCR2B = 200;	// Velocidad fija
 }
 

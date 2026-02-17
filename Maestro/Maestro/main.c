@@ -24,10 +24,10 @@
 /* Comandos Nano 1                                                      */
 /************************************************************************/
 
-#define CMD_PUMP_START  0x20
-#define CMD_PUMP_STOP   0x21
-#define CMD_SERVO_OPEN 0x10
-#define CMD_SERVO_CLOSE 0x11
+#define CMD_PUMP_START	0x20
+#define CMD_PUMP_STOP	0x21
+#define CMD_SERVO_OPEN	0x10
+#define CMD_SERVO_CLOSE	0x11
 
 /************************************************************************/
 /* Comandos Nano 2                                                      */
@@ -39,7 +39,7 @@
 /* parametros                                                           */
 /************************************************************************/
 
-#define SOIL_THRESHOLD   80
+#define SOIL_THRESHOLD   150
 #define RX_BUFFER_SIZE   32
 
 /************************************************************************/
@@ -106,6 +106,7 @@ uint8_t Read_Soil(void)
 }
 
 
+
 /************************************************************************/
 /* PROCESAMIENTO UART                                                   */
 /************************************************************************/
@@ -124,13 +125,15 @@ void Process_Command(void)
 		uint8_t soil = Read_Soil();
 
 		char buffer[40];
-		sprintf(buffer, "Soil: %d\r\n", soil);
+		uint8_t percentage = 100 - ((soil * 100) / 255);
+
+		sprintf(buffer, "Soil: %d (%d%%)\r\n", soil, percentage);
 		UART_SendString(buffer);
 
 		if(soil < SOIL_THRESHOLD)
-		UART_SendString("Necesita agua\r\n");
-		else
 		UART_SendString("No necesita agua\r\n");
+		else
+		UART_SendString("Necesita agua\r\n");
 	}
 	
 	else if(rx_buffer[0] == 'P')

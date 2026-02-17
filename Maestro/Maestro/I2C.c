@@ -46,13 +46,20 @@ uint8_t I2C_MasterStart()
 	}
 
 	uint8_t status = (TWSR & 0xF8);
-	return (status == 0x08);
+	return (status == 0x08 || status == 0x10);
 }
 
 uint8_t I2C_MasterRepeatedStart(void)
 {
+	uint16_t timeout = 0;
+	
 	TWCR = (1 << TWINT) | (1 << TWSTA) | (1 << TWEN);
-	while (!(TWCR & (1 << TWINT)));
+	
+	while (!(TWCR & (1 << TWINT)))
+	{
+		if (timeout++ > I2C_TIMEOUT_LIMIT)
+			return 0;
+	}
 
 	uint8_t status = (TWSR & 0xF8);
 	return (status == 0x10);
@@ -70,7 +77,7 @@ uint8_t I2C_Master_Write(uint8_t dato)
 	TWDR = dato;
 	TWCR = (1 << TWEN) | (1 << TWINT);
 	
-	while(!(TWCR & (1 << TWINT)));
+	while(!(TWCR & (1 << TWINT)))
 	{
 		if (timeout++ > I2C_TIMEOUT_LIMIT)
 		return 0;  // timeout

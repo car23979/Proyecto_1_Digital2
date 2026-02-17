@@ -3,31 +3,31 @@ Proyecto1_Esclavo_SERVO_Stepper.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .data         00000008  00800100  00000268  000002fc  2**0
+  0 .data         00000008  00800100  0000027c  00000310  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  1 .text         00000268  00000000  00000000  00000094  2**1
+  1 .text         0000027c  00000000  00000000  00000094  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .bss          00000004  00800108  00800108  00000304  2**0
+  2 .bss          00000004  00800108  00800108  00000318  2**0
                   ALLOC
-  3 .comment      00000030  00000000  00000000  00000304  2**0
+  3 .comment      00000030  00000000  00000000  00000318  2**0
                   CONTENTS, READONLY
-  4 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  00000334  2**2
+  4 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  00000348  2**2
                   CONTENTS, READONLY
-  5 .debug_aranges 000000a8  00000000  00000000  00000374  2**0
+  5 .debug_aranges 000000a8  00000000  00000000  00000388  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_info   00000a1e  00000000  00000000  0000041c  2**0
+  6 .debug_info   00000a37  00000000  00000000  00000430  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_abbrev 000007bb  00000000  00000000  00000e3a  2**0
+  7 .debug_abbrev 000007c4  00000000  00000000  00000e67  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_line   00000556  00000000  00000000  000015f5  2**0
+  8 .debug_line   0000057c  00000000  00000000  0000162b  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_frame  000000e0  00000000  00000000  00001b4c  2**2
+  9 .debug_frame  000000e0  00000000  00000000  00001ba8  2**2
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_str    0000048c  00000000  00000000  00001c2c  2**0
+ 10 .debug_str    00000491  00000000  00000000  00001c88  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_loc    00000091  00000000  00000000  000020b8  2**0
+ 11 .debug_loc    000000ba  00000000  00000000  00002119  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_ranges 00000068  00000000  00000000  00002149  2**0
+ 12 .debug_ranges 00000068  00000000  00000000  000021d3  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -72,7 +72,7 @@ Disassembly of section .text:
   74:	11 e0       	ldi	r17, 0x01	; 1
   76:	a0 e0       	ldi	r26, 0x00	; 0
   78:	b1 e0       	ldi	r27, 0x01	; 1
-  7a:	e8 e6       	ldi	r30, 0x68	; 104
+  7a:	ec e7       	ldi	r30, 0x7C	; 124
   7c:	f2 e0       	ldi	r31, 0x02	; 2
   7e:	02 c0       	rjmp	.+4      	; 0x84 <__do_copy_data+0x10>
   80:	05 90       	lpm	r0, Z+
@@ -95,7 +95,7 @@ Disassembly of section .text:
   96:	b2 07       	cpc	r27, r18
   98:	e1 f7       	brne	.-8      	; 0x92 <.do_clear_bss_loop>
   9a:	0e 94 53 00 	call	0xa6	; 0xa6 <main>
-  9e:	0c 94 32 01 	jmp	0x264	; 0x264 <_exit>
+  9e:	0c 94 3c 01 	jmp	0x278	; 0x278 <_exit>
 
 000000a2 <__bad_interrupt>:
   a2:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
@@ -108,22 +108,22 @@ int main(void)
 {
 	I2C_Slave_Init(SLAVE_ADDR);
   a6:	80 e3       	ldi	r24, 0x30	; 48
-  a8:	0e 94 e3 00 	call	0x1c6	; 0x1c6 <I2C_Slave_Init>
+  a8:	0e 94 e0 00 	call	0x1c0	; 0x1c0 <I2C_Slave_Init>
 	Servo_Init();
-  ac:	0e 94 7c 00 	call	0xf8	; 0xf8 <Servo_Init>
+  ac:	0e 94 79 00 	call	0xf2	; 0xf2 <Servo_Init>
 	Stepper_Init();
-  b0:	0e 94 a8 00 	call	0x150	; 0x150 <Stepper_Init>
+  b0:	0e 94 a5 00 	call	0x14a	; 0x14a <Stepper_Init>
 
 	uint8_t cmd;
 
 	while(1)
 	{
 		cmd = I2C_Slave_CheckCommand();
-  b4:	0e 94 ea 00 	call	0x1d4	; 0x1d4 <I2C_Slave_CheckCommand>
+  b4:	0e 94 e7 00 	call	0x1ce	; 0x1ce <I2C_Slave_CheckCommand>
 		
 		if(cmd != 0xFF)
   b8:	8f 3f       	cpi	r24, 0xFF	; 255
-  ba:	d9 f0       	breq	.+54     	; 0xf2 <main+0x4c>
+  ba:	c1 f0       	breq	.+48     	; 0xec <main+0x46>
 		{
 
 			switch(cmd)
@@ -140,316 +140,367 @@ int main(void)
   d0:	0d c0       	rjmp	.+26     	; 0xec <main+0x46>
 			{
 				case CMD_PUMP_START:
-				Pump_Start();
-  d2:	0e 94 ac 00 	call	0x158	; 0x158 <Pump_Start>
-				break;
+					Pump_Start();
+  d2:	0e 94 a9 00 	call	0x152	; 0x152 <Pump_Start>
+					break;
   d6:	0a c0       	rjmp	.+20     	; 0xec <main+0x46>
 
 				case CMD_PUMP_STOP:
-				Pump_Stop();
-  d8:	0e 94 b0 00 	call	0x160	; 0x160 <Pump_Stop>
-				break;
+					Pump_Stop();
+  d8:	0e 94 ad 00 	call	0x15a	; 0x15a <Pump_Stop>
+					break;
   dc:	07 c0       	rjmp	.+14     	; 0xec <main+0x46>
 
 				case CMD_SERVO_OPEN:
-				Servo_SetAngle(120);
+					Servo_SetAngle(120);
   de:	88 e7       	ldi	r24, 0x78	; 120
-  e0:	0e 94 92 00 	call	0x124	; 0x124 <Servo_SetAngle>
-				break;
+  e0:	0e 94 8f 00 	call	0x11e	; 0x11e <Servo_SetAngle>
+					break;
   e4:	03 c0       	rjmp	.+6      	; 0xec <main+0x46>
 
 				case CMD_SERVO_CLOSE:
-				Servo_SetAngle(20);
+					Servo_SetAngle(20);
   e6:	84 e1       	ldi	r24, 0x14	; 20
-  e8:	0e 94 92 00 	call	0x124	; 0x124 <Servo_SetAngle>
-				break;
-			}
+  e8:	0e 94 8f 00 	call	0x11e	; 0x11e <Servo_SetAngle>
 
-			TWCR = (1<<TWEN)|(1<<TWEA)|(1<<TWINT);
-  ec:	84 ec       	ldi	r24, 0xC4	; 196
-  ee:	80 93 bc 00 	sts	0x00BC, r24	; 0x8000bc <__TEXT_REGION_LENGTH__+0x7f80bc>
+			
 		}
 		
 		// IMPORTANTE
 		Stepper_Task();
-  f2:	0e 94 b6 00 	call	0x16c	; 0x16c <Stepper_Task>
+  ec:	0e 94 b3 00 	call	0x166	; 0x166 <Stepper_Task>
 	}
-  f6:	de cf       	rjmp	.-68     	; 0xb4 <main+0xe>
+  f0:	e1 cf       	rjmp	.-62     	; 0xb4 <main+0xe>
 
-000000f8 <Servo_Init>:
+000000f2 <Servo_Init>:
 #define SERVO_MAX_PULSE 4800   // 2 ms
 
 
 void Servo_Init(void)
 {
 	DDRB |= (1 << PB1);   // D9
-  f8:	84 b1       	in	r24, 0x04	; 4
-  fa:	82 60       	ori	r24, 0x02	; 2
-  fc:	84 b9       	out	0x04, r24	; 4
+  f2:	84 b1       	in	r24, 0x04	; 4
+  f4:	82 60       	ori	r24, 0x02	; 2
+  f6:	84 b9       	out	0x04, r24	; 4
 
 	TCCR1A = (1 << COM1A1) | (1 << WGM11);
-  fe:	82 e8       	ldi	r24, 0x82	; 130
- 100:	80 93 80 00 	sts	0x0080, r24	; 0x800080 <__TEXT_REGION_LENGTH__+0x7f8080>
+  f8:	82 e8       	ldi	r24, 0x82	; 130
+  fa:	80 93 80 00 	sts	0x0080, r24	; 0x800080 <__TEXT_REGION_LENGTH__+0x7f8080>
 	TCCR1B = (1 << WGM13) | (1 << WGM12) | (1 << CS11);
- 104:	8a e1       	ldi	r24, 0x1A	; 26
- 106:	80 93 81 00 	sts	0x0081, r24	; 0x800081 <__TEXT_REGION_LENGTH__+0x7f8081>
+  fe:	8a e1       	ldi	r24, 0x1A	; 26
+ 100:	80 93 81 00 	sts	0x0081, r24	; 0x800081 <__TEXT_REGION_LENGTH__+0x7f8081>
 
 	ICR1 = 39999;         // 50 Hz
- 10a:	8f e3       	ldi	r24, 0x3F	; 63
- 10c:	9c e9       	ldi	r25, 0x9C	; 156
- 10e:	90 93 87 00 	sts	0x0087, r25	; 0x800087 <__TEXT_REGION_LENGTH__+0x7f8087>
- 112:	80 93 86 00 	sts	0x0086, r24	; 0x800086 <__TEXT_REGION_LENGTH__+0x7f8086>
+ 104:	8f e3       	ldi	r24, 0x3F	; 63
+ 106:	9c e9       	ldi	r25, 0x9C	; 156
+ 108:	90 93 87 00 	sts	0x0087, r25	; 0x800087 <__TEXT_REGION_LENGTH__+0x7f8087>
+ 10c:	80 93 86 00 	sts	0x0086, r24	; 0x800086 <__TEXT_REGION_LENGTH__+0x7f8086>
 	OCR1A = SERVO_MIN_PULSE;
- 116:	80 eb       	ldi	r24, 0xB0	; 176
- 118:	94 e0       	ldi	r25, 0x04	; 4
- 11a:	90 93 89 00 	sts	0x0089, r25	; 0x800089 <__TEXT_REGION_LENGTH__+0x7f8089>
- 11e:	80 93 88 00 	sts	0x0088, r24	; 0x800088 <__TEXT_REGION_LENGTH__+0x7f8088>
- 122:	08 95       	ret
+ 110:	80 eb       	ldi	r24, 0xB0	; 176
+ 112:	94 e0       	ldi	r25, 0x04	; 4
+ 114:	90 93 89 00 	sts	0x0089, r25	; 0x800089 <__TEXT_REGION_LENGTH__+0x7f8089>
+ 118:	80 93 88 00 	sts	0x0088, r24	; 0x800088 <__TEXT_REGION_LENGTH__+0x7f8088>
+ 11c:	08 95       	ret
 
-00000124 <Servo_SetAngle>:
+0000011e <Servo_SetAngle>:
 }
 
 void Servo_SetAngle(uint8_t angle)
 {
 	if (angle > 180)
- 124:	85 3b       	cpi	r24, 0xB5	; 181
- 126:	08 f0       	brcs	.+2      	; 0x12a <Servo_SetAngle+0x6>
+ 11e:	85 3b       	cpi	r24, 0xB5	; 181
+ 120:	08 f0       	brcs	.+2      	; 0x124 <Servo_SetAngle+0x6>
 	angle = 180;
- 128:	84 eb       	ldi	r24, 0xB4	; 180
+ 122:	84 eb       	ldi	r24, 0xB4	; 180
 
 	OCR1A = SERVO_MIN_PULSE +
 	((uint32_t)angle * (SERVO_MAX_PULSE - SERVO_MIN_PULSE)) / 180;
- 12a:	28 2f       	mov	r18, r24
- 12c:	30 e0       	ldi	r19, 0x00	; 0
- 12e:	a0 e1       	ldi	r26, 0x10	; 16
- 130:	be e0       	ldi	r27, 0x0E	; 14
- 132:	0e 94 23 01 	call	0x246	; 0x246 <__umulhisi3>
- 136:	24 eb       	ldi	r18, 0xB4	; 180
- 138:	30 e0       	ldi	r19, 0x00	; 0
- 13a:	40 e0       	ldi	r20, 0x00	; 0
- 13c:	50 e0       	ldi	r21, 0x00	; 0
- 13e:	0e 94 01 01 	call	0x202	; 0x202 <__udivmodsi4>
+ 124:	28 2f       	mov	r18, r24
+ 126:	30 e0       	ldi	r19, 0x00	; 0
+ 128:	a0 e1       	ldi	r26, 0x10	; 16
+ 12a:	be e0       	ldi	r27, 0x0E	; 14
+ 12c:	0e 94 2d 01 	call	0x25a	; 0x25a <__umulhisi3>
+ 130:	24 eb       	ldi	r18, 0xB4	; 180
+ 132:	30 e0       	ldi	r19, 0x00	; 0
+ 134:	40 e0       	ldi	r20, 0x00	; 0
+ 136:	50 e0       	ldi	r21, 0x00	; 0
+ 138:	0e 94 0b 01 	call	0x216	; 0x216 <__udivmodsi4>
 void Servo_SetAngle(uint8_t angle)
 {
 	if (angle > 180)
 	angle = 180;
 
 	OCR1A = SERVO_MIN_PULSE +
- 142:	20 55       	subi	r18, 0x50	; 80
- 144:	3b 4f       	sbci	r19, 0xFB	; 251
- 146:	30 93 89 00 	sts	0x0089, r19	; 0x800089 <__TEXT_REGION_LENGTH__+0x7f8089>
- 14a:	20 93 88 00 	sts	0x0088, r18	; 0x800088 <__TEXT_REGION_LENGTH__+0x7f8088>
- 14e:	08 95       	ret
+ 13c:	20 55       	subi	r18, 0x50	; 80
+ 13e:	3b 4f       	sbci	r19, 0xFB	; 251
+ 140:	30 93 89 00 	sts	0x0089, r19	; 0x800089 <__TEXT_REGION_LENGTH__+0x7f8089>
+ 144:	20 93 88 00 	sts	0x0088, r18	; 0x800088 <__TEXT_REGION_LENGTH__+0x7f8088>
+ 148:	08 95       	ret
 
-00000150 <Stepper_Init>:
+0000014a <Stepper_Init>:
 static uint8_t pump_running = 0;
 static uint16_t step_counter = 0;
 
 void Stepper_Init(void)
 {
 	DDRD |= (1<<IN1)|(1<<IN2)|(1<<IN3)|(1<<IN4);
- 150:	8a b1       	in	r24, 0x0a	; 10
- 152:	80 6f       	ori	r24, 0xF0	; 240
- 154:	8a b9       	out	0x0a, r24	; 10
- 156:	08 95       	ret
+ 14a:	8a b1       	in	r24, 0x0a	; 10
+ 14c:	80 6f       	ori	r24, 0xF0	; 240
+ 14e:	8a b9       	out	0x0a, r24	; 10
+ 150:	08 95       	ret
 
-00000158 <Pump_Start>:
+00000152 <Pump_Start>:
 }
 
 void Pump_Start(void)
 {
 	pump_running = 1;
- 158:	81 e0       	ldi	r24, 0x01	; 1
- 15a:	80 93 0a 01 	sts	0x010A, r24	; 0x80010a <pump_running>
- 15e:	08 95       	ret
+ 152:	81 e0       	ldi	r24, 0x01	; 1
+ 154:	80 93 0a 01 	sts	0x010A, r24	; 0x80010a <pump_running>
+ 158:	08 95       	ret
 
-00000160 <Pump_Stop>:
+0000015a <Pump_Stop>:
 }
 
 void Pump_Stop(void)
 {
 	pump_running = 0;
- 160:	10 92 0a 01 	sts	0x010A, r1	; 0x80010a <pump_running>
+ 15a:	10 92 0a 01 	sts	0x010A, r1	; 0x80010a <pump_running>
 	PORTD &= 0x0F;
- 164:	8b b1       	in	r24, 0x0b	; 11
- 166:	8f 70       	andi	r24, 0x0F	; 15
- 168:	8b b9       	out	0x0b, r24	; 11
- 16a:	08 95       	ret
+ 15e:	8b b1       	in	r24, 0x0b	; 11
+ 160:	8f 70       	andi	r24, 0x0F	; 15
+ 162:	8b b9       	out	0x0b, r24	; 11
+ 164:	08 95       	ret
 
-0000016c <Stepper_Task>:
+00000166 <Stepper_Task>:
 }
 
 void Stepper_Task(void)
 {
 	if(pump_running)
- 16c:	80 91 0a 01 	lds	r24, 0x010A	; 0x80010a <pump_running>
- 170:	88 23       	and	r24, r24
- 172:	41 f1       	breq	.+80     	; 0x1c4 <Stepper_Task+0x58>
+ 166:	80 91 0a 01 	lds	r24, 0x010A	; 0x80010a <pump_running>
+ 16a:	88 23       	and	r24, r24
+ 16c:	41 f1       	breq	.+80     	; 0x1be <Stepper_Task+0x58>
 	{
 		step_counter++;
- 174:	80 91 08 01 	lds	r24, 0x0108	; 0x800108 <__data_end>
- 178:	90 91 09 01 	lds	r25, 0x0109	; 0x800109 <__data_end+0x1>
- 17c:	01 96       	adiw	r24, 0x01	; 1
- 17e:	90 93 09 01 	sts	0x0109, r25	; 0x800109 <__data_end+0x1>
- 182:	80 93 08 01 	sts	0x0108, r24	; 0x800108 <__data_end>
+ 16e:	80 91 08 01 	lds	r24, 0x0108	; 0x800108 <__data_end>
+ 172:	90 91 09 01 	lds	r25, 0x0109	; 0x800109 <__data_end+0x1>
+ 176:	01 96       	adiw	r24, 0x01	; 1
+ 178:	90 93 09 01 	sts	0x0109, r25	; 0x800109 <__data_end+0x1>
+ 17c:	80 93 08 01 	sts	0x0108, r24	; 0x800108 <__data_end>
 
 		if(step_counter >= 2000)   // Ajustar velocidad
- 186:	80 3d       	cpi	r24, 0xD0	; 208
- 188:	97 40       	sbci	r25, 0x07	; 7
- 18a:	e0 f0       	brcs	.+56     	; 0x1c4 <Stepper_Task+0x58>
+ 180:	80 3d       	cpi	r24, 0xD0	; 208
+ 182:	97 40       	sbci	r25, 0x07	; 7
+ 184:	e0 f0       	brcs	.+56     	; 0x1be <Stepper_Task+0x58>
 		{
 			step_counter = 0;
- 18c:	10 92 09 01 	sts	0x0109, r1	; 0x800109 <__data_end+0x1>
- 190:	10 92 08 01 	sts	0x0108, r1	; 0x800108 <__data_end>
+ 186:	10 92 09 01 	sts	0x0109, r1	; 0x800109 <__data_end+0x1>
+ 18a:	10 92 08 01 	sts	0x0108, r1	; 0x800108 <__data_end>
 
 			step_index = (step_index + 1) % 8;
- 194:	80 91 0b 01 	lds	r24, 0x010B	; 0x80010b <step_index>
- 198:	90 e0       	ldi	r25, 0x00	; 0
- 19a:	01 96       	adiw	r24, 0x01	; 1
- 19c:	87 70       	andi	r24, 0x07	; 7
- 19e:	90 78       	andi	r25, 0x80	; 128
- 1a0:	99 23       	and	r25, r25
- 1a2:	24 f4       	brge	.+8      	; 0x1ac <Stepper_Task+0x40>
- 1a4:	01 97       	sbiw	r24, 0x01	; 1
- 1a6:	88 6f       	ori	r24, 0xF8	; 248
- 1a8:	9f 6f       	ori	r25, 0xFF	; 255
- 1aa:	01 96       	adiw	r24, 0x01	; 1
- 1ac:	80 93 0b 01 	sts	0x010B, r24	; 0x80010b <step_index>
+ 18e:	80 91 0b 01 	lds	r24, 0x010B	; 0x80010b <step_index>
+ 192:	90 e0       	ldi	r25, 0x00	; 0
+ 194:	01 96       	adiw	r24, 0x01	; 1
+ 196:	87 70       	andi	r24, 0x07	; 7
+ 198:	90 78       	andi	r25, 0x80	; 128
+ 19a:	99 23       	and	r25, r25
+ 19c:	24 f4       	brge	.+8      	; 0x1a6 <Stepper_Task+0x40>
+ 19e:	01 97       	sbiw	r24, 0x01	; 1
+ 1a0:	88 6f       	ori	r24, 0xF8	; 248
+ 1a2:	9f 6f       	ori	r25, 0xFF	; 255
+ 1a4:	01 96       	adiw	r24, 0x01	; 1
+ 1a6:	80 93 0b 01 	sts	0x010B, r24	; 0x80010b <step_index>
 			PORTD = (PORTD & 0x0F) | sequence[step_index];
- 1b0:	2b b1       	in	r18, 0x0b	; 11
- 1b2:	e8 2f       	mov	r30, r24
- 1b4:	f0 e0       	ldi	r31, 0x00	; 0
- 1b6:	e0 50       	subi	r30, 0x00	; 0
- 1b8:	ff 4f       	sbci	r31, 0xFF	; 255
- 1ba:	90 81       	ld	r25, Z
- 1bc:	82 2f       	mov	r24, r18
- 1be:	8f 70       	andi	r24, 0x0F	; 15
- 1c0:	89 2b       	or	r24, r25
- 1c2:	8b b9       	out	0x0b, r24	; 11
- 1c4:	08 95       	ret
+ 1aa:	2b b1       	in	r18, 0x0b	; 11
+ 1ac:	e8 2f       	mov	r30, r24
+ 1ae:	f0 e0       	ldi	r31, 0x00	; 0
+ 1b0:	e0 50       	subi	r30, 0x00	; 0
+ 1b2:	ff 4f       	sbci	r31, 0xFF	; 255
+ 1b4:	90 81       	ld	r25, Z
+ 1b6:	82 2f       	mov	r24, r18
+ 1b8:	8f 70       	andi	r24, 0x0F	; 15
+ 1ba:	89 2b       	or	r24, r25
+ 1bc:	8b b9       	out	0x0b, r24	; 11
+ 1be:	08 95       	ret
 
-000001c6 <I2C_Slave_Init>:
+000001c0 <I2C_Slave_Init>:
 #include "I2C_Slave.h"
 
 
 void I2C_Slave_Init(uint8_t address)
 {
 	TWAR = (address << 1);     // Dirección esclavo
- 1c6:	88 0f       	add	r24, r24
- 1c8:	80 93 ba 00 	sts	0x00BA, r24	; 0x8000ba <__TEXT_REGION_LENGTH__+0x7f80ba>
+ 1c0:	88 0f       	add	r24, r24
+ 1c2:	80 93 ba 00 	sts	0x00BA, r24	; 0x8000ba <__TEXT_REGION_LENGTH__+0x7f80ba>
 	TWCR = (1 << TWEN) |       // Habilitar TWI
- 1cc:	84 ec       	ldi	r24, 0xC4	; 196
- 1ce:	80 93 bc 00 	sts	0x00BC, r24	; 0x8000bc <__TEXT_REGION_LENGTH__+0x7f80bc>
- 1d2:	08 95       	ret
+ 1c6:	84 ec       	ldi	r24, 0xC4	; 196
+ 1c8:	80 93 bc 00 	sts	0x00BC, r24	; 0x8000bc <__TEXT_REGION_LENGTH__+0x7f80bc>
+ 1cc:	08 95       	ret
 
-000001d4 <I2C_Slave_CheckCommand>:
+000001ce <I2C_Slave_CheckCommand>:
 	(1 << TWINT);       // Limpiar bandera
 }
 
 uint8_t I2C_Slave_CheckCommand(void)
 {
-	if(!(TWCR & (1 << TWINT)))
- 1d4:	80 91 bc 00 	lds	r24, 0x00BC	; 0x8000bc <__TEXT_REGION_LENGTH__+0x7f80bc>
- 1d8:	88 23       	and	r24, r24
- 1da:	7c f4       	brge	.+30     	; 0x1fa <I2C_Slave_CheckCommand+0x26>
-		return 0xFF;
-		
-	uint8_t status = TWSR & 0xF8;
- 1dc:	80 91 b9 00 	lds	r24, 0x00B9	; 0x8000b9 <__TEXT_REGION_LENGTH__+0x7f80b9>
- 1e0:	88 7f       	andi	r24, 0xF8	; 248
+	if (!(TWCR & (1 << TWINT)))
+ 1ce:	80 91 bc 00 	lds	r24, 0x00BC	; 0x8000bc <__TEXT_REGION_LENGTH__+0x7f80bc>
+ 1d2:	88 23       	and	r24, r24
+ 1d4:	f4 f4       	brge	.+60     	; 0x212 <I2C_Slave_CheckCommand+0x44>
+	return 0xFF;
 
-	// 0x60 = SLA+W recibido
-	if (status == 0x60)
- 1e2:	80 36       	cpi	r24, 0x60	; 96
- 1e4:	61 f4       	brne	.+24     	; 0x1fe <I2C_Slave_CheckCommand+0x2a>
+	uint8_t status = TWSR & 0xF8;
+ 1d6:	80 91 b9 00 	lds	r24, 0x00B9	; 0x8000b9 <__TEXT_REGION_LENGTH__+0x7f80b9>
+ 1da:	88 7f       	andi	r24, 0xF8	; 248
+
+	switch(status)
+ 1dc:	80 38       	cpi	r24, 0x80	; 128
+ 1de:	49 f0       	breq	.+18     	; 0x1f2 <I2C_Slave_CheckCommand+0x24>
+ 1e0:	80 3a       	cpi	r24, 0xA0	; 160
+ 1e2:	69 f0       	breq	.+26     	; 0x1fe <I2C_Slave_CheckCommand+0x30>
+ 1e4:	80 36       	cpi	r24, 0x60	; 96
+ 1e6:	81 f4       	brne	.+32     	; 0x208 <I2C_Slave_CheckCommand+0x3a>
 	{
-		TWCR = (1 << TWEN) | (1 << TWEA) | (1 << TWINT);
- 1e6:	84 ec       	ldi	r24, 0xC4	; 196
- 1e8:	80 93 bc 00 	sts	0x00BC, r24	; 0x8000bc <__TEXT_REGION_LENGTH__+0x7f80bc>
-		while (!(TWCR & (1 << TWINT)));
- 1ec:	80 91 bc 00 	lds	r24, 0x00BC	; 0x8000bc <__TEXT_REGION_LENGTH__+0x7f80bc>
- 1f0:	88 23       	and	r24, r24
- 1f2:	e4 f7       	brge	.-8      	; 0x1ec <I2C_Slave_CheckCommand+0x18>
-		return TWDR;
- 1f4:	80 91 bb 00 	lds	r24, 0x00BB	; 0x8000bb <__TEXT_REGION_LENGTH__+0x7f80bb>
- 1f8:	08 95       	ret
+		case 0x60:  // SLA+W recibido
+		TWCR = (1<<TWEN)|(1<<TWEA)|(1<<TWINT);
+ 1e8:	84 ec       	ldi	r24, 0xC4	; 196
+ 1ea:	80 93 bc 00 	sts	0x00BC, r24	; 0x8000bc <__TEXT_REGION_LENGTH__+0x7f80bc>
+		default:
+		TWCR = (1<<TWEN)|(1<<TWEA)|(1<<TWINT);
+		break;
+	}
+
+	return 0xFF;
+ 1ee:	8f ef       	ldi	r24, 0xFF	; 255
+
+	switch(status)
+	{
+		case 0x60:  // SLA+W recibido
+		TWCR = (1<<TWEN)|(1<<TWEA)|(1<<TWINT);
+		break;
+ 1f0:	08 95       	ret
+
+		case 0x80:  // Dato recibido
+		{
+			uint8_t data = TWDR;
+ 1f2:	80 91 bb 00 	lds	r24, 0x00BB	; 0x8000bb <__TEXT_REGION_LENGTH__+0x7f80bb>
+			TWCR = (1<<TWEN)|(1<<TWEA)|(1<<TWINT);
+ 1f6:	94 ec       	ldi	r25, 0xC4	; 196
+ 1f8:	90 93 bc 00 	sts	0x00BC, r25	; 0x8000bc <__TEXT_REGION_LENGTH__+0x7f80bc>
+			return data;
+ 1fc:	08 95       	ret
+		}
+
+		case 0xA0:  // STOP recibido
+		TWCR = (1<<TWEN)|(1<<TWEA)|(1<<TWINT);
+ 1fe:	84 ec       	ldi	r24, 0xC4	; 196
+ 200:	80 93 bc 00 	sts	0x00BC, r24	; 0x8000bc <__TEXT_REGION_LENGTH__+0x7f80bc>
+		default:
+		TWCR = (1<<TWEN)|(1<<TWEA)|(1<<TWINT);
+		break;
+	}
+
+	return 0xFF;
+ 204:	8f ef       	ldi	r24, 0xFF	; 255
+			return data;
+		}
+
+		case 0xA0:  // STOP recibido
+		TWCR = (1<<TWEN)|(1<<TWEA)|(1<<TWINT);
+		break;
+ 206:	08 95       	ret
+
+		default:
+		TWCR = (1<<TWEN)|(1<<TWEA)|(1<<TWINT);
+ 208:	84 ec       	ldi	r24, 0xC4	; 196
+ 20a:	80 93 bc 00 	sts	0x00BC, r24	; 0x8000bc <__TEXT_REGION_LENGTH__+0x7f80bc>
+		break;
+	}
+
+	return 0xFF;
+ 20e:	8f ef       	ldi	r24, 0xFF	; 255
+		TWCR = (1<<TWEN)|(1<<TWEA)|(1<<TWINT);
+		break;
+
+		default:
+		TWCR = (1<<TWEN)|(1<<TWEA)|(1<<TWINT);
+		break;
+ 210:	08 95       	ret
 }
 
 uint8_t I2C_Slave_CheckCommand(void)
 {
-	if(!(TWCR & (1 << TWINT)))
-		return 0xFF;
- 1fa:	8f ef       	ldi	r24, 0xFF	; 255
- 1fc:	08 95       	ret
-		TWCR = (1 << TWEN) | (1 << TWEA) | (1 << TWINT);
-		while (!(TWCR & (1 << TWINT)));
-		return TWDR;
+	if (!(TWCR & (1 << TWINT)))
+	return 0xFF;
+ 212:	8f ef       	ldi	r24, 0xFF	; 255
+		TWCR = (1<<TWEN)|(1<<TWEA)|(1<<TWINT);
+		break;
 	}
 
 	return 0xFF;
- 1fe:	8f ef       	ldi	r24, 0xFF	; 255
 }
- 200:	08 95       	ret
+ 214:	08 95       	ret
 
-00000202 <__udivmodsi4>:
- 202:	a1 e2       	ldi	r26, 0x21	; 33
- 204:	1a 2e       	mov	r1, r26
- 206:	aa 1b       	sub	r26, r26
- 208:	bb 1b       	sub	r27, r27
- 20a:	fd 01       	movw	r30, r26
- 20c:	0d c0       	rjmp	.+26     	; 0x228 <__udivmodsi4_ep>
+00000216 <__udivmodsi4>:
+ 216:	a1 e2       	ldi	r26, 0x21	; 33
+ 218:	1a 2e       	mov	r1, r26
+ 21a:	aa 1b       	sub	r26, r26
+ 21c:	bb 1b       	sub	r27, r27
+ 21e:	fd 01       	movw	r30, r26
+ 220:	0d c0       	rjmp	.+26     	; 0x23c <__udivmodsi4_ep>
 
-0000020e <__udivmodsi4_loop>:
- 20e:	aa 1f       	adc	r26, r26
- 210:	bb 1f       	adc	r27, r27
- 212:	ee 1f       	adc	r30, r30
- 214:	ff 1f       	adc	r31, r31
- 216:	a2 17       	cp	r26, r18
- 218:	b3 07       	cpc	r27, r19
- 21a:	e4 07       	cpc	r30, r20
- 21c:	f5 07       	cpc	r31, r21
- 21e:	20 f0       	brcs	.+8      	; 0x228 <__udivmodsi4_ep>
- 220:	a2 1b       	sub	r26, r18
- 222:	b3 0b       	sbc	r27, r19
- 224:	e4 0b       	sbc	r30, r20
- 226:	f5 0b       	sbc	r31, r21
+00000222 <__udivmodsi4_loop>:
+ 222:	aa 1f       	adc	r26, r26
+ 224:	bb 1f       	adc	r27, r27
+ 226:	ee 1f       	adc	r30, r30
+ 228:	ff 1f       	adc	r31, r31
+ 22a:	a2 17       	cp	r26, r18
+ 22c:	b3 07       	cpc	r27, r19
+ 22e:	e4 07       	cpc	r30, r20
+ 230:	f5 07       	cpc	r31, r21
+ 232:	20 f0       	brcs	.+8      	; 0x23c <__udivmodsi4_ep>
+ 234:	a2 1b       	sub	r26, r18
+ 236:	b3 0b       	sbc	r27, r19
+ 238:	e4 0b       	sbc	r30, r20
+ 23a:	f5 0b       	sbc	r31, r21
 
-00000228 <__udivmodsi4_ep>:
- 228:	66 1f       	adc	r22, r22
- 22a:	77 1f       	adc	r23, r23
- 22c:	88 1f       	adc	r24, r24
- 22e:	99 1f       	adc	r25, r25
- 230:	1a 94       	dec	r1
- 232:	69 f7       	brne	.-38     	; 0x20e <__udivmodsi4_loop>
- 234:	60 95       	com	r22
- 236:	70 95       	com	r23
- 238:	80 95       	com	r24
- 23a:	90 95       	com	r25
- 23c:	9b 01       	movw	r18, r22
- 23e:	ac 01       	movw	r20, r24
- 240:	bd 01       	movw	r22, r26
- 242:	cf 01       	movw	r24, r30
- 244:	08 95       	ret
+0000023c <__udivmodsi4_ep>:
+ 23c:	66 1f       	adc	r22, r22
+ 23e:	77 1f       	adc	r23, r23
+ 240:	88 1f       	adc	r24, r24
+ 242:	99 1f       	adc	r25, r25
+ 244:	1a 94       	dec	r1
+ 246:	69 f7       	brne	.-38     	; 0x222 <__udivmodsi4_loop>
+ 248:	60 95       	com	r22
+ 24a:	70 95       	com	r23
+ 24c:	80 95       	com	r24
+ 24e:	90 95       	com	r25
+ 250:	9b 01       	movw	r18, r22
+ 252:	ac 01       	movw	r20, r24
+ 254:	bd 01       	movw	r22, r26
+ 256:	cf 01       	movw	r24, r30
+ 258:	08 95       	ret
 
-00000246 <__umulhisi3>:
- 246:	a2 9f       	mul	r26, r18
- 248:	b0 01       	movw	r22, r0
- 24a:	b3 9f       	mul	r27, r19
- 24c:	c0 01       	movw	r24, r0
- 24e:	a3 9f       	mul	r26, r19
- 250:	70 0d       	add	r23, r0
- 252:	81 1d       	adc	r24, r1
- 254:	11 24       	eor	r1, r1
- 256:	91 1d       	adc	r25, r1
- 258:	b2 9f       	mul	r27, r18
- 25a:	70 0d       	add	r23, r0
- 25c:	81 1d       	adc	r24, r1
- 25e:	11 24       	eor	r1, r1
- 260:	91 1d       	adc	r25, r1
- 262:	08 95       	ret
+0000025a <__umulhisi3>:
+ 25a:	a2 9f       	mul	r26, r18
+ 25c:	b0 01       	movw	r22, r0
+ 25e:	b3 9f       	mul	r27, r19
+ 260:	c0 01       	movw	r24, r0
+ 262:	a3 9f       	mul	r26, r19
+ 264:	70 0d       	add	r23, r0
+ 266:	81 1d       	adc	r24, r1
+ 268:	11 24       	eor	r1, r1
+ 26a:	91 1d       	adc	r25, r1
+ 26c:	b2 9f       	mul	r27, r18
+ 26e:	70 0d       	add	r23, r0
+ 270:	81 1d       	adc	r24, r1
+ 272:	11 24       	eor	r1, r1
+ 274:	91 1d       	adc	r25, r1
+ 276:	08 95       	ret
 
-00000264 <_exit>:
- 264:	f8 94       	cli
+00000278 <_exit>:
+ 278:	f8 94       	cli
 
-00000266 <__stop_program>:
- 266:	ff cf       	rjmp	.-2      	; 0x266 <__stop_program>
+0000027a <__stop_program>:
+ 27a:	ff cf       	rjmp	.-2      	; 0x27a <__stop_program>
