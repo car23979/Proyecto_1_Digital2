@@ -35,7 +35,7 @@
 
 #define CMD_READ_SOIL	0x40
 #define CMD_FAN_ON		0x41
-#define CMF_FAN_OFF		0X42
+#define CMD_FAN_OFF		0X42
 #define CMD_FAN_PWM		0x43
 
 /************************************************************************/
@@ -94,6 +94,14 @@ void Fan_On(void)
 	I2C_MasterStart();
 	I2C_Master_Write((SLAVE_ENV_ADDR<<1)|I2C_WRITE);
 	I2C_Master_Write(CMD_FAN_ON);
+	I2C_MasterStop();
+}
+
+void Fan_Off(void)
+{
+	I2C_MasterStart();
+	I2C_Master_Write((SLAVE_ENV_ADDR<<1)|I2C_WRITE);
+	I2C_Master_Write(CMD_FAN_OFF);
 	I2C_MasterStop();
 }
 
@@ -176,6 +184,21 @@ void Process_Command(void)
 			UART_SendString("Servo CLOSE\r\n");
 		}
 	}
+	
+	else if(rx_buffer[0] == 'F')
+	{
+		if(rx_buffer[1] == '1')
+		{
+			Fan_On();
+			UART_SendString("Fan ON\r\n");
+		}
+		else if(rx_buffer[1] == '0')
+		{
+			Fan_Off();
+			UART_SendString("Fan OFF\r\n");
+		}
+	}
+}
 }
 
 
