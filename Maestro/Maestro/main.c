@@ -201,9 +201,11 @@ void Process_Command(void)
 	// S1 -> Servo abrir
 	// S0 -> Servo cerrar
 	// Q  -> Sensor humedad suelo
+	// L  -> Sensor luz ambiente
 	
 	if(rx_buffer[0] == 'Q')   // Consulta humedad
 	{
+		
 		uint8_t soil = Read_Soil();
 
 		char buffer[40];
@@ -227,6 +229,14 @@ void Process_Command(void)
 		UART_SendString("No necesita agua\r\n");
 		else
 		UART_SendString("Necesita agua\r\n");
+	}
+	
+	else if(rx_buffer[0] == 'L') 
+	{ // Comando Luminosidad
+		char buffer[40]
+		uint16_t lux = TSL2561_Read_Luminosity();
+		sprintf(buffer, "Luminosidad: %u lux\r\n", lux);
+		UART_SendString(buffer);
 	}
 	
 	else if(rx_buffer[0] == 'P')
@@ -316,6 +326,13 @@ int main(void)
 	I2C_MasterInit(100000UL, 1);
 	UART_Init(UART_BAUD_9600_16MHZ, UART_INTERRUPTS_ENABLED);
 	LCD_Init_4b(&lcd);
+	
+	// Inicializar TSL2561
+	I2C_MasterStart();
+	I2C_Master_Write((TSL2561_ADDR << 1) | I2C_WRITE);
+	I2C_Master_Write(0x80 | 0x00); // Control Register
+	I2C_Master_Write(0x03);        // Power Up
+	I2C_MasterStop();
 
 	sei();   // Habilitar interrupciones globales
 
@@ -341,7 +358,9 @@ int main(void)
 		static uint16_t refresh_timer = 0;
 		if(refresh_timer++ > 500) 
 		
-		{ // Aproximadamente cada 500ms
+		{ 
+			// Aproximadamente cada 500ms
+			uint16_t current_lux = TSL2561_Read_Luminosity();
 			uint8_t soil = Read_Soil();
 
 			uint8_t percentage;
@@ -359,8 +378,12 @@ int main(void)
 
 			
 			// Actualizar LCD Fila 2
+			LCD_SetCursor(&lcd, 0, 10);
+			sprintf(lcd_buf, "L: %5u lux  ", current_lux);
+			LCD_WriteString(&lcd, lcd_buf);
+			
 			LCD_SetCursor(&lcd, 0, 1);
-			sprintf(lcd_buf, "Humedad: %3d%%  ", percentage);
+			sprintf(lcd_buf, "H: %3d%%  ", percentage);
 			LCD_WriteString(&lcd, lcd_buf);
 			
 			refresh_timer = 0;
